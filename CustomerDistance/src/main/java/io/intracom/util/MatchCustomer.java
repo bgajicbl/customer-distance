@@ -2,6 +2,7 @@ package io.intracom.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -25,8 +26,16 @@ public class MatchCustomer {
 
 	public static void main(String[] args) {
 		String path = INPUT;
-		if (args.length > 0)
-			path = args[0];
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Enter path to JSON file: ");
+		String s = null;
+		try {
+			s = br.readLine();
+			if (s.length() > 0)
+				path = s;
+		} catch (IOException e1) {
+			LOGGER.severe("Problem with console input!");
+		}
 
 		MatchCustomer mc = new MatchCustomer();
 		try {
@@ -38,7 +47,7 @@ public class MatchCustomer {
 
 	public void match(String inputFile) throws IOException {
 		List<Customer> customerList = new ArrayList<Customer>();
-		//mapper for reading json
+		// mapper for reading json
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
@@ -60,9 +69,9 @@ public class MatchCustomer {
 			}
 
 			List<Customer> output = filterByDistance(customerList);
-			//sort by id ascending
+			// sort by id ascending
 			Collections.sort(output);
-			//print eligible customers
+			// print eligible customers
 			for (Customer c : output) {
 				System.out.println(c.getUserId() + "|" + c.getName());
 
@@ -85,13 +94,13 @@ public class MatchCustomer {
 	public Customer parseLine(String line, ObjectMapper mapper) throws IllegalArgumentException, IOException {
 		try {
 			Customer c = mapper.readValue(line, Customer.class);
-			//validate Customer
+			// validate Customer
 			if (validateCustomer(c))
 				return c;
 			else {
 				throw new IllegalArgumentException();
 			}
-			//in case of wrong format in line
+			// in case of wrong format in line
 		} catch (JsonMappingException e) {
 			throw new IllegalArgumentException();
 		}
@@ -102,9 +111,8 @@ public class MatchCustomer {
 
 		if (c.getUserId() > 0 && c.getName() != null && c.getLatitude() != 0.0 && c.getLongitude() != 0.0)
 			return true;
-		else 
+		else
 			return false;
-		
 
 	}
 
