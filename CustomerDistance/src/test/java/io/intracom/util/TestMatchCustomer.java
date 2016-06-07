@@ -1,4 +1,4 @@
-package io.intracom.util.tests;
+package io.intracom.util;
 
 import java.io.IOException;
 
